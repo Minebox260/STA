@@ -27,7 +27,7 @@
     extern int sd; //socket de dialogue
 
     typedef struct car {
-        char ip[MAXOCTETS];
+        struct sockaddr_in addr;
         int pos_x;
         int pos_y;
     } car;

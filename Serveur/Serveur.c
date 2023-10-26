@@ -73,7 +73,7 @@ void * user_menu(void * t_data) {
         
         printf("//      VOITURES CONNECTEES     //\n\n");
         for (i = 0; i < MAXVOITURES; i++) {
-           if (cars_list[i] != NULL) printf("[\033[0;32m%d\033[0;37m] | IP : %s | X : %d | Y : %d\n", i, cars_list[i]->ip, cars_list[i]->pos_x, cars_list[i]->pos_y);
+           if (cars_list[i] != NULL) printf("[\033[0;32m%d\033[0;37m] | IP : %s | X : %d | Y : %d\n", i, inet_ntoa(cars_list[i]->addr.sin_addr), cars_list[i]->pos_x, cars_list[i]->pos_y);
            else printf("[\033[0;31m-\033[0;37m] Non connectée\n"); 
         }
         printf("\n\n");
@@ -108,7 +108,6 @@ void handle_input(char * menu_input) {
     int car_id;
     char buffer[MAXOCTETS-3];
     char send[MAXOCTETS+1];
-    struct sockaddr_in send_ip;
     if (!strcmp(menu_input, "SENDTO")) {
         printf("\nQuelle voiture souhaitez vous commander ?\nSERVEUR > ");
         fgets(buffer, MAXOCTETS-3, stdin);
@@ -116,11 +115,11 @@ void handle_input(char * menu_input) {
         if (car_id >= 0 && car_id < MAXVOITURES && cars_list[car_id] != NULL) {
             printf("\nQuelle commande souhaitez vous envoyer ?\nSERVEUR > ");
             fgets(buffer, MAXOCTETS-3, stdin);
-            strcat(send, "105:");
+            itoa("105:", send);
             strcat(send, buffer);
-            inet_aton(cars_list[car_id]->ip, &send_ip.sin_addr);
-            send_data(send, send_ip);
+            send_data(send, cars_list[car_id]->addr);
         } else printf("\nID Invalide");
     } else if (!strcmp(menu_input, "QUIT")) exit(EXIT_SUCCESS);
+    sleep(1);
 }
 

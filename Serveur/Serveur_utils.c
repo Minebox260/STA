@@ -11,7 +11,7 @@ int get_car_id(char * ip_client) {
     int i;
 
     while (i < MAXVOITURES && cars_list[i] != NULL) {
-        if (!strcmp(cars_list[i]->ip, ip_client)) break;
+        if (!strcmp(inet_ntoa(cars_list[i]->addr.sin_addr), ip_client)) break;
         else i++;
     }
     

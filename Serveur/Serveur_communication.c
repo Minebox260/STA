@@ -14,6 +14,7 @@ void * receive_data(void * arg) {
     longadr=sizeof(adr_client);
 
     while (1) {
+        memset(&adr_client,0,sizeof(struct sockaddr_in));
         nbcar=recvfrom(sd, buff_recv,MAXOCTETS+1,0,(struct sockaddr *) &adr_client,&longadr);
         CHECK_ERROR(nbcar,0,"\nSERVEUR - Problème lors de la réception\n");
         printf("Received request : %s from %s\n", buff_recv, inet_ntoa(adr_client.sin_addr));
@@ -32,7 +33,7 @@ void * send_data(char data[MAXOCTETS+1], struct sockaddr_in adr_client) {
 
 void * handle_request(char request[MAXOCTETS + 1], struct sockaddr_in adr_client, char * resp) {
     int code;
-    int resp_code = 000;
+    int resp_code = 0;
     int car_id;
     char *ptr = strtok(request, ":");
     char buffer[5];
@@ -45,7 +46,7 @@ void * handle_request(char request[MAXOCTETS + 1], struct sockaddr_in adr_client
     if (code == 101) { // Demande enregistrement
         i = 0;
         while (i < MAXVOITURES && cars_list[i] != NULL) { //On cherche le prochain emplacement de voiture libre
-            if (!strcmp(ip_client, cars_list[i]->ip)) {
+            if (!strcmp(ip_client, inet_ntoa(cars_list[i]->addr.sin_addr))) {
                 resp_code = 401;
                 break;
             }
@@ -55,11 +56,9 @@ void * handle_request(char request[MAXOCTETS + 1], struct sockaddr_in adr_client
             resp_code = 402;
         } else if (resp_code != 401) {
             cars_list[i] = (struct car *)malloc(sizeof(car));
-            
-            strcpy(cars_list[i]->ip, ip_client);
+            memcpy(&cars_list[i]->addr,(struct sockaddr*)&adr_client, sizeof(struct sockaddr_in));
             cars_list[i]->pos_x = 0;
             cars_list[i]->pos_y = 0;
-
             resp_code = 201;
         }
         itoa(resp_code, resp);

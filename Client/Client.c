@@ -40,21 +40,22 @@ int main(int argc, char *argv[]) {
         while(1) {
             printf("Enregistrement auprès du serveur...\n");
             sendto(sd, "101", strlen("101")+1, 0, (const struct sockaddr *)&server_adr, sizeof(server_adr));
-            recvfrom(sd, recv_buff, strlen(recv_buff), 0, NULL, NULL);
+            recvfrom(sd, recv_buff, MAXOCTETS+1, 0, NULL, NULL);
             printf("Réponse reçu: %s\n", recv_buff);
             ptr = strtok(recv_buff, ":");
-            printf("ptr : %s", ptr);
             code = atoi(ptr);
-            printf("code %d\n", code);
-            if (code==201) break;
+            if (code==201 || code==401) break;
+            sleep(1);
         }
-
+        printf("Enregistrement effectué !\n");
         while (1) {
             printf("En attente d'une commande...\n");
-            recvfrom(sd, recv_buff, strlen(recv_buff), 0, NULL, NULL);
+            recvfrom(sd, recv_buff, MAXOCTETS+1, 0, NULL, NULL);
             printf("Commande reçu: %s\n", recv_buff);
-            char * ptr = strtok(recv_buff, ":");
+            ptr = strtok(recv_buff, ":");
+            printf("code:|%d|,ptr:|%s|\n", code, ptr);
             code = atoi(ptr);
+            printf("code:|%d|,ptr:|%s|\n", code, ptr);
             if (code==105) break;
         }
         ptr = strtok(NULL, ":");
