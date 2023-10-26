@@ -1,6 +1,6 @@
 #ifndef _SERVEUR_COMM_H
     #define _SERVEUR_COMM_H
-    
+
     //////////////////////////////////////////////////
     //  TABLE DES REQUETES                          //
     //  101 : Demande d'enregistrement              //
@@ -32,7 +32,7 @@
     //////////////////////////////////////////////////
 
     void * receive_data(void * arg);
-    void * send_data(char data[MAXOCTETS+1], struct sockaddr_in adr_client);
-    void * handle_request(char request[MAXOCTETS + 1], struct sockaddr_in adr_client, char * resp);
+    void * send_data(char * data, struct sockaddr_in adr_client);
+    void * handle_request(char * request, struct sockaddr_in adr_client, char * resp);
 
 #endif

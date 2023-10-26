@@ -24,7 +24,7 @@
     void * user_menu(void * t_data);
     void handle_input(char * menu_input);
 
-    static int sd; //socket de dialogue
+    extern int sd; //socket de dialogue
 
     typedef struct car {
         char ip[MAXOCTETS];
@@ -32,6 +32,6 @@
         int pos_y;
     } car;
 
-    struct car * cars[MAXVOITURES];
+    extern struct car * cars_list[MAXVOITURES];
 
 #endif

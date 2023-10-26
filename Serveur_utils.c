@@ -9,8 +9,8 @@ void itoa(int val, char * dest) {
 int get_car_id(char * ip_client) {
     int i;
 
-    while (i < MAXVOITURES && cars[i] != NULL) {
-        if (!strcmp(cars[i]->ip, ip_client)) break;
+    while (i < MAXVOITURES && cars_list[i] != NULL) {
+        if (!strcmp(cars_list[i]->ip, ip_client)) break;
         else i++;
     }
     

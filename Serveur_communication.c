@@ -4,23 +4,22 @@
 
 void * receive_data(void * arg) {
 
-    struct sockaddr_in adr_client; //adresse du clientt_data
+    struct sockaddr_in adr_client; //adresse du client
     socklen_t longadr;
     int nbcar;
-    char ip_client[MAXOCTETS+1];
+    char ip_client[MAXOCTETS];
     char buff_recv[MAXOCTETS+1]; // Buffer de réception d'octets
     char resp[MAXOCTETS+1];
 
     longadr=sizeof(adr_client);
 
     while (1) {
-        
         nbcar=recvfrom(sd, buff_recv,MAXOCTETS+1,0,(struct sockaddr *) &adr_client,&longadr);
         CHECK_ERROR(nbcar,0,"\nSERVEUR - Problème lors de la réception\n");
         printf("Received request : %s", buff_recv);
-        handle_request(buff_recv, adr_client, resp);
+        //handle_request(buff_recv, adr_client, resp);
 
-        send_data(resp, adr_client);
+        //send_data(resp, adr_client);
     }
 }
 
@@ -44,8 +43,8 @@ void * handle_request(char request[MAXOCTETS + 1], struct sockaddr_in adr_client
     code = atoi(ptr);
     if (code == 101) { // Demande enregistrement
         int i = 0;
-        while (i < MAXVOITURES && cars[i] != NULL) { //On cherche le prochain emplacement de voiture libre
-            if (!strcmp(ip_client, cars[i]->ip)) {
+        while (i < MAXVOITURES && cars_list[i] != NULL) { //On cherche le prochain emplacement de voiture libre
+            if (!strcmp(ip_client, cars_list[i]->ip)) {
                 resp_code = 401;
                 break;
             }
@@ -54,11 +53,11 @@ void * handle_request(char request[MAXOCTETS + 1], struct sockaddr_in adr_client
         if (i = MAXVOITURES) {
             resp_code = 402;
         } else if (resp_code != 401) {
-            cars[i] = (struct car *)malloc(sizeof(car));
+            cars_list[i] = (struct car *)malloc(sizeof(car));
             
-            strcpy(cars[i]->ip, ip_client);
-            cars[i]->pos_x = 0;
-            cars[i]->pos_y = 0;
+            strcpy(cars_list[i]->ip, ip_client);
+            cars_list[i]->pos_x = 0;
+            cars_list[i]->pos_y = 0;
 
             resp_code = 201;
         }
