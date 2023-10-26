@@ -115,10 +115,9 @@ void handle_input(char * menu_input) {
         if (car_id >= 0 && car_id < MAXVOITURES && cars_list[car_id] != NULL) {
             printf("\nQuelle commande souhaitez vous envoyer ?\nSERVEUR > ");
             fgets(buffer, MAXOCTETS-3, stdin);
-            itoa("105:", send);
-            strcat(send, buffer);
+            sprintf(send, "%d:%s", 105, buffer);
             send_data(send, cars_list[car_id]->addr);
-        } else printf("\nID Invalide");
+        } else printf("\nID Invalide\n");
     } else if (!strcmp(menu_input, "QUIT")) exit(EXIT_SUCCESS);
     sleep(1);
 }

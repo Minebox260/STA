@@ -2,14 +2,14 @@
 /* APPLICATION : Serveur Mini Projet Voiture Autonome STA 2023                */
 /* Date : 19/10/2023                                                          */
 /* Version : 1.0                                                              */
-/* Compilation : gcc Serveur.c -o Serveur    po                                 */
-/* usage : ./Serveur <ip serveur> <port serveur>                                          */
+/* Compilation : make Client.exe                                 */
+/* usage : ./Client.exe <ip serveur> <port serveur>                                          */
 /******************************************************************************/
 
 #include "include/Client.h"
 
 int main(int argc, char *argv[]) {
-    if (argc != 3) printf("SERVEUR | Utilisation : ./serveur <ip serveur> <port serveur> \n");
+    if (argc != 3) printf("CLIENT | Utilisation : ./Client.exe <ip serveur> <port serveur> \n");
     else {
         struct sockaddr_in client_adr, server_adr; //adresse du serveur
         char recv_buff[MAXOCTETS+1];
@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
         
         client_adr.sin_family=AF_INET;
         client_adr.sin_port=htons(0);
-        client_adr.sin_addr.s_addr=inet_addr("127.0.0.1");
+        client_adr.sin_addr.s_addr=inet_addr("0.0.0.0");
 
         // Affectation de l'adresse au socket
         erreur=bind(sd,(const struct sockaddr *) &client_adr,sizeof(client_adr));
@@ -51,11 +51,9 @@ int main(int argc, char *argv[]) {
         while (1) {
             printf("En attente d'une commande...\n");
             recvfrom(sd, recv_buff, MAXOCTETS+1, 0, NULL, NULL);
-            printf("Commande reçu: %s\n", recv_buff);
+            printf("Réponse reçue: %s\n", recv_buff);
             ptr = strtok(recv_buff, ":");
-            printf("code:|%d|,ptr:|%s|\n", code, ptr);
             code = atoi(ptr);
-            printf("code:|%d|,ptr:|%s|\n", code, ptr);
             if (code==105) break;
         }
         ptr = strtok(NULL, ":");
