@@ -1,6 +1,6 @@
-#include "Serveur.h"
-#include "Serveur_communication.h"
-#include "Serveur_utils.h"
+#include "include/Serveur.h"
+#include "include/Serveur_communication.h"
+#include "include/Serveur_utils.h"
 
 void * receive_data(void * arg) {
 
@@ -16,17 +16,18 @@ void * receive_data(void * arg) {
     while (1) {
         nbcar=recvfrom(sd, buff_recv,MAXOCTETS+1,0,(struct sockaddr *) &adr_client,&longadr);
         CHECK_ERROR(nbcar,0,"\nSERVEUR - Problème lors de la réception\n");
-        printf("Received request : %s", buff_recv);
-        //handle_request(buff_recv, adr_client, resp);
-
-        //send_data(resp, adr_client);
+        printf("Received request : %s from %s\n", buff_recv, inet_ntoa(adr_client.sin_addr));
+        handle_request(buff_recv, adr_client, resp);
+        send_data(resp, adr_client);
     }
 }
 
 void * send_data(char data[MAXOCTETS+1], struct sockaddr_in adr_client) {
     int nbcar;
+    printf("sending %s\n", data);
     nbcar=sendto(sd, data,strlen(data) + 1,0,(const struct sockaddr *) &adr_client,sizeof(adr_client));
     CHECK_ERROR(nbcar,0,"\nErreur lors de l'émission des données");
+    printf("nbcar : %d\n", nbcar);
 }
 
 void * handle_request(char request[MAXOCTETS + 1], struct sockaddr_in adr_client, char * resp) {
@@ -36,13 +37,13 @@ void * handle_request(char request[MAXOCTETS + 1], struct sockaddr_in adr_client
     char *ptr = strtok(request, ":");
     char buffer[5];
     char ip_client[MAXOCTETS+1];
-
+    int i;
     strcpy(ip_client, inet_ntoa(adr_client.sin_addr));
 
     // Analyse du code de requête
     code = atoi(ptr);
     if (code == 101) { // Demande enregistrement
-        int i = 0;
+        i = 0;
         while (i < MAXVOITURES && cars_list[i] != NULL) { //On cherche le prochain emplacement de voiture libre
             if (!strcmp(ip_client, cars_list[i]->ip)) {
                 resp_code = 401;
@@ -50,7 +51,7 @@ void * handle_request(char request[MAXOCTETS + 1], struct sockaddr_in adr_client
             }
             else i++;
         }
-        if (i = MAXVOITURES) {
+        if (i == MAXVOITURES) {
             resp_code = 402;
         } else if (resp_code != 401) {
             cars_list[i] = (struct car *)malloc(sizeof(car));
@@ -87,6 +88,7 @@ void * handle_request(char request[MAXOCTETS + 1], struct sockaddr_in adr_client
             }
         }
     }
+    printf("\nresp : %s\n", resp);
     
 }
 

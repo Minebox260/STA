@@ -15,23 +15,11 @@
     #include <pthread.h>
     
     #define MAXOCTETS 150
-    #define MAXVOITURES 2
-
     #define CHECK_ERROR(val1,val2,msg)   if (val1==val2) \
                                         { perror(msg); \
                                             exit(EXIT_FAILURE); }
-
-    void * user_menu(void * t_data);
     void handle_input(char * menu_input);
 
-    extern static int sd; //socket de dialogue
-
-    typedef struct car {
-        char ip[MAXOCTETS];
-        int pos_x;
-        int pos_y;
-    } car;
-
-    extern struct car * cars[MAXVOITURES];
+    int sd; //socket de dialogue
 
 #endif

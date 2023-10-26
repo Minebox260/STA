@@ -1,6 +1,7 @@
-#include "Serveur.h"
-#include "Serveur_communication.h"
-#include "Serveur_utils.h"
+#include "include/Serveur.h"
+#include "include/Serveur_communication.h"
+#include "include/Serveur_utils.h"
+
 void itoa(int val, char * dest) {
     dest[0] = '\0';
     sprintf(dest, "%d", val);
