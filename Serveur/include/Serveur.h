@@ -16,6 +16,11 @@
     
     #define MAXOCTETS 150
     #define MAXVOITURES 2
+    #define NBRESSOURCES 1
+
+    // Liste des ressources à accès réservé :
+    // 0 : Pont
+    // 
 
     #define CHECK_ERROR(val1,val2,msg)   if (val1==val2) \
                                         { perror(msg); \
@@ -34,4 +39,11 @@
 
     extern struct car * cars_list[MAXVOITURES];
 
+    typedef struct ressource {
+        int reserved;
+        int car_id;
+    } ressource;
+
+    extern struct ressource * ressources_list[NBRESSOURCES];
+    
 #endif

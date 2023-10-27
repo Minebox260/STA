@@ -25,7 +25,9 @@
     // 405 : La ressource est occupée               //
     // 406 : La ressource n'est pas occupée /       //
     //       Impossible de la libérer               //
-    // 407 : Impossible d'acquitter la consigne     //
+    // 407 : Cette voiture a déjà réservé           //
+    //       la ressource                           //
+    // 408 : Impossible d'acquitter la consigne     //
     //                                              //
     // AUTRES                                       //
     // 500 : Requête invalide                       //

@@ -11,14 +11,15 @@
 #include "include/Serveur_communication.h"
 
 struct car * cars_list[MAXVOITURES] = {NULL};
+struct ressource * ressources_list[NBRESSOURCES] = {NULL};
 
 int sd;
 
 int main(int argc, char *argv[]) {
     if (argc != 2) printf("SERVEUR | Utilisation : ./serveur <port serveur> \n");
     else {
-        struct sockaddr_in server_adr; //adresse du serveur
-
+        struct sockaddr_in server_adr; // Adresse du serveur
+        pthread_t * tids;
         int erreur; // Gestion des erreurs
 
         // initscr();
@@ -29,12 +30,20 @@ int main(int argc, char *argv[]) {
 
         printf("SERVEUR - Initialisation\n");
 
-        pthread_t * tids;
-        tids = (pthread_t *)malloc(2*sizeof(pthread_t));
+        printf("SERVEUR - Initialisation des ressources\n");
+        for (int i = 0; i < NBRESSOURCES; i++) {
+            ressources_list[i] = (struct ressource *)malloc(sizeof(struct ressource));
+            ressources_list[i]->car_id = -1;
+            ressources_list[i]->reserved = 0;
+        }
+
+        printf("SERVEUR - Initialisation du socket de dialogue\n");
+        
+        
         sd=socket(AF_INET,SOCK_DGRAM,0);
         printf("SERVEUR - N° du socket dialogue : %d \n", sd);
         
-        // Préparation de l'adresse
+        // Préparation de l'adresse du serveur
         server_adr.sin_family=AF_INET;
         server_adr.sin_port=htons(atoi(argv[1]));
         server_adr.sin_addr.s_addr=inet_addr("0.0.0.0");
@@ -43,12 +52,17 @@ int main(int argc, char *argv[]) {
         erreur=bind(sd,(const struct sockaddr *) &server_adr,sizeof(server_adr));
         CHECK_ERROR(erreur,-1, "SERVEUR - Erreur lors du bind du socket de dialogue\n");
 
+        printf("SERVEUR - Initialisation des threads\n");
+
+        tids = (pthread_t *)malloc(2*sizeof(pthread_t));
         pthread_create(&tids[0], NULL, receive_data, NULL);
         pthread_create(&tids[1], NULL, user_menu, NULL);
 
         pthread_join(tids[0], NULL);
         pthread_join(tids[1], NULL);
         
+        printf("Arrêt du serveur");
+
         close(sd);
 
     }
@@ -62,10 +76,11 @@ void * user_menu(void * t_data) {
     char last_info[MAXOCTETS+1];
     //int menu_input_index = 0;
     
+    sleep(1);
     while (1) {
         system("clear");
         printf("\033[0;37m"
-               "/////////////////////////////////\n"
+               "//////////////////////////////////\n"
                "//                              //\n"
                "//  SERVEUR VOITURES AUTONOMES  //\n"
                "//                              //\n"
@@ -105,20 +120,27 @@ void * user_menu(void * t_data) {
 }
 
 void handle_input(char * menu_input) {
+
     int car_id;
     char buffer[MAXOCTETS-3];
     char send[MAXOCTETS+1];
+
     if (!strcmp(menu_input, "SENDTO")) {
+
         printf("\nQuelle voiture souhaitez vous commander ?\nSERVEUR > ");
         fgets(buffer, MAXOCTETS-3, stdin);
         car_id = atoi(buffer);
+
         if (car_id >= 0 && car_id < MAXVOITURES && cars_list[car_id] != NULL) {
+
             printf("\nQuelle commande souhaitez vous envoyer ?\nSERVEUR > ");
             fgets(buffer, MAXOCTETS-3, stdin);
             sprintf(send, "%d:%s", 105, buffer);
+
             send_data(send, cars_list[car_id]->addr);
+
         } else printf("\nID Invalide\n");
+
     } else if (!strcmp(menu_input, "QUIT")) exit(EXIT_SUCCESS);
-    sleep(1);
 }
 
