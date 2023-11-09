@@ -24,7 +24,6 @@ int main(int argc, char *argv[]) {
         printf("Client - Initialisation\n");
 
         
-        // Préparation de l'adresse
         server_adr.sin_family=AF_INET;
         server_adr.sin_port=htons(atoi(argv[2]));
         server_adr.sin_addr.s_addr=inet_addr(argv[1]);
@@ -32,7 +31,8 @@ int main(int argc, char *argv[]) {
         client_adr.sin_family=AF_INET;
         client_adr.sin_port=htons(0);
         client_adr.sin_addr.s_addr=inet_addr("0.0.0.0");
-
+    // Préparation de l'adresse
+    
         // Affectation de l'adresse au socket
         erreur=bind(sd,(const struct sockaddr *) &client_adr,sizeof(client_adr));
         CHECK_ERROR(erreur,-1, "SERVEUR - Erreur lors du bind du socket d'écoute\n");

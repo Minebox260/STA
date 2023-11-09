@@ -22,12 +22,6 @@ int main(int argc, char *argv[]) {
         pthread_t * tids;
         int erreur; // Gestion des erreurs
 
-        // initscr();
-        // cbreak();
-        // noecho();
-        // scrollok(stdscr, TRUE);
-        // nodelay(stdscr, TRUE);
-
         printf("SERVEUR - Initialisation\n");
 
         printf("SERVEUR - Initialisation des ressources\n");
@@ -71,11 +65,9 @@ int main(int argc, char *argv[]) {
 
 void * user_menu(void * t_data) {
     int i;
-    //char key_input;
     char menu_input[MAXOCTETS+1];
     char last_info[MAXOCTETS+1];
-    //int menu_input_index = 0;
-    
+
     sleep(1);
     while (1) {
         system("clear");
@@ -95,21 +87,7 @@ void * user_menu(void * t_data) {
         printf("//             MENU             //\n\n");
         printf("SENDTO : Envoyer une commande de déplacement à une voiture\n");
         printf("QUIT : Eteindre le serveur\n\n");
-        //printf("SERVEUR > %s", menu_input);
         printf("SERVEUR > ");
-        //usleep(1000);
-        
-        // key_input = getch();
-        // if (key_input != ERR) {j
-        //     if(key_input == 13) {
-        //         handle_input(menu_input);
-        //         memset(menu_input, 0, MAXOCTETS+1);
-        //         menu_input_index = 0;
-        //     } else {
-        //         menu_input[menu_input_index] = key_input;
-        //         menu_input_index++;
-        //     }
-        // }
 
         fgets(menu_input,MAXOCTETS+1, stdin);
         menu_input[strlen(menu_input)-1] = '\0';
